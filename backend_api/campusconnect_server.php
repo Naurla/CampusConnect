@@ -39,8 +39,7 @@ switch ($action) {
         break;
 
     case 'login':
-        // We will add this later!
-        echo json_encode(["status" => "message", "message" => "Login COMING SOON"]);
+        loginUser($conn, $data); // <--- UPDATED: Now calls the actual function
         break;
 
     default:
@@ -62,7 +61,9 @@ function registerUser($conn, $data) {
     $phone = $data['phone'];
     $college = $data['college'];
     $program = $data['program'];
-    $password = password_hash($data['password'], PASSWORD_DEFAULT); // Encrypt password!
+    
+    // Encrypt password!
+    $password = password_hash($data['password'], PASSWORD_DEFAULT); 
 
     // Check if email or student number already exists
     $check = $conn->prepare("SELECT id FROM users WHERE email = ? OR student_number = ?");
@@ -86,6 +87,38 @@ function registerUser($conn, $data) {
         echo json_encode(["status" => "success", "message" => "Registration successful"]);
     } else {
         echo json_encode(["status" => "error", "message" => "Database error"]);
+    }
+}
+
+// NEW FUNCTION: LOGIN
+function loginUser($conn, $data) {
+    $username = $data['username']; // Can be email OR student_number
+    $password = $data['password'];
+
+    // Prepare SQL to look for EITHER email OR student number
+    $sql = "SELECT id, fname, lname, password FROM users WHERE email = ? OR student_number = ?";
+    $stmt = $conn->prepare($sql);
+    
+    // Bind the same username variable twice (for the two ? placeholders)
+    $stmt->bind_param("ss", $username, $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+        // Verify the encrypted password
+        if (password_verify($password, $row['password'])) {
+            // Success! We don't send the password back, just the user info
+            echo json_encode([
+                "status" => "success", 
+                "message" => "Login successful",
+                "user_id" => $row['id'],
+                "name" => $row['fname'] . " " . $row['lname']
+            ]);
+        } else {
+            echo json_encode(["status" => "error", "message" => "Invalid password"]);
+        }
+    } else {
+        echo json_encode(["status" => "error", "message" => "User not found"]);
     }
 }
 ?>
