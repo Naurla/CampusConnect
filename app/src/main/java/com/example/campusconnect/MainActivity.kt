@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
             if (username.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Please enter email/ID and password", Toast.LENGTH_SHORT).show()
             } else {
-                // TODO: Connect to PHP/MySQL to verify credentials
+                // NOLN BYOT
                 Toast.makeText(this, "Attempting Login...", Toast.LENGTH_SHORT).show()
             }
         }
