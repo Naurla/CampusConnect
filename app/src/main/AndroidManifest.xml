@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CampusConnect">
         <activity
+            android:name=".register"
+            android:exported="false" />
+        <activity
+            android:name=".student_dashboard"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
