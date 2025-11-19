@@ -12,10 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CampusConnect">
         <activity
-            android:name=".register"
+            android:name=".Register"
             android:exported="false" />
         <activity
-            android:name=".student_dashboard"
+            android:name=".StudentDashboard"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
