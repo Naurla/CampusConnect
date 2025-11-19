@@ -41,7 +41,7 @@ switch ($action) {
     case 'login':
         loginUser($conn, $data); // <--- UPDATED: Now calls the actual function
         break;
-
+    
     default:
         echo json_encode(["status" => "error", "message" => "Invalid action"]);
 }
