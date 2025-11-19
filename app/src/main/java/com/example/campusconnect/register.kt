@@ -1,16 +1,19 @@
 package com.example.campusconnect
 
 import android.app.DatePickerDialog
-import android.content.Intent // Import Intent
+import android.content.Intent
 import android.os.Bundle
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog // Import AlertDialog
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.campusconnect.databinding.ActivityRegisterBinding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.Calendar
 
 class Register : AppCompatActivity() {
@@ -53,25 +56,66 @@ class Register : AppCompatActivity() {
 
     private fun setupRegisterButton() {
         binding.btnRegister.setOnClickListener {
-            // 1. Get text from inputs
+            // 1. Get all data
+            val studentNum = binding.etStudentNumber.text.toString()
             val fname = binding.etFname.text.toString()
+            val mname = binding.etMname.text.toString()
             val lname = binding.etLname.text.toString()
             val email = binding.etEmail.text.toString()
+            val phone = binding.etPhone.text.toString()
+            val college = binding.etCollege.text.toString()
+            val program = binding.etProgram.text.toString()
             val password = binding.etPassword.text.toString()
             val dob = binding.etDob.text.toString()
 
-            // (I omitted the other variables for brevity, but they are still there in your code)
+            // Get Gender
+            val selectedGenderId = binding.rgGender.checkedRadioButtonId
+            var gender = ""
+            if (selectedGenderId != -1) {
+                val radioButton = findViewById<RadioButton>(selectedGenderId)
+                gender = radioButton.text.toString()
+            }
 
-            // 2. Simple Validation
+            // 2. Validation
             if (fname.isEmpty() || lname.isEmpty() || email.isEmpty() || password.isEmpty() || dob.isEmpty()) {
                 Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // 3. SHOW THE SUCCESS POPUP
-            // Later, you will put the PHP connection code here.
-            // For now, we assume it succeeded:
-            showSuccessDialog()
+            // 3. Create Request Object
+            val request = RegisterRequest(
+                student_number = studentNum,
+                fname = fname,
+                mname = mname,
+                lname = lname,
+                gender = gender,
+                dob = dob,
+                email = email,
+                phone = phone,
+                college = college,
+                program = program,
+                password = password
+            )
+
+            // 4. SEND TO DATABASE (The Network Call)
+            ApiClient.instance.registerUser(request).enqueue(object : Callback<RegisterResponse> {
+                override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
+                    if (response.isSuccessful && response.body() != null) {
+                        val result = response.body()!!
+                        if (result.status == "success") {
+                            showSuccessDialog() // Only show if PHP says success
+                        } else {
+                            Toast.makeText(this@Register, "Error: ${result.message}", Toast.LENGTH_LONG).show()
+                        }
+                    } else {
+                        Toast.makeText(this@Register, "Server Error", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
+                    Toast.makeText(this@Register, "Network Failed: ${t.message}", Toast.LENGTH_LONG).show()
+                }
+            })
         }
     }
 
@@ -79,23 +123,13 @@ class Register : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Registration Successful")
         builder.setMessage("Your account has been created successfully! You can now log in.")
-
-        // "Positive" button is the main action button
         builder.setPositiveButton("Go to Login") { dialog, which ->
-            // Navigate back to Login (MainActivity)
             val intent = Intent(this, MainActivity::class.java)
-
-            // This flag clears the "back stack" so the user can't press "Back"
-            // and return to the registration form after registering.
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-
             startActivity(intent)
-            finish() // Destroys this Register activity
+            finish()
         }
-
-        // Prevent the user from clicking outside the box to close it
         builder.setCancelable(false)
-
         val dialog = builder.create()
         dialog.show()
     }
