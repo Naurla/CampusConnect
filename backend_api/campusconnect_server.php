@@ -40,7 +40,7 @@ switch ($action) {
 
     case 'login':
         // We will add this later!
-        echo json_encode(["status" => "message", "message" => "Login COMING SOON"]);
+        echo json_encode(["status" => "message", "message" => "Login COMING SOON23"]);
         break;
 
     default:
