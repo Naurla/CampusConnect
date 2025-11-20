@@ -18,41 +18,32 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Handle window insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(binding.main.id)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        setupButtons()
+        setupLandingButtons()
     }
 
-    private fun setupButtons() {
-        // 1. Login Button Logic
-        binding.btnLogin.setOnClickListener {
-            val username = binding.etUsername.text.toString()
-            val password = binding.etPassword.text.toString()
-
-            if (username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Please enter email/ID and password", Toast.LENGTH_SHORT).show()
-            } else {
-                // NOLN BYOT
-                Toast.makeText(this, "Attempting Login...", Toast.LENGTH_SHORT).show()
-            }
+    private fun setupLandingButtons() {
+        // 1. Navigate to Login Activity
+        binding.btnGoToLogin.setOnClickListener {
+            val intent = Intent(this, Login::class.java)
+            startActivity(intent)
         }
 
-        // 2. Forgot Password Logic
-        binding.tvForgotPassword.setOnClickListener {
-            Toast.makeText(this, "Forgot Password clicked", Toast.LENGTH_SHORT).show()
-            // You can create a ForgotPasswordActivity later and add Intent here
-        }
-
-        // 3. Register Link Logic (Navigation)
-        binding.tvRegisterLink.setOnClickListener {
-            // This code switches from Login Screen -> Register Screen
+        // 2. Navigate to Register (Signup) Activity
+        binding.btnGoToSignup.setOnClickListener {
             val intent = Intent(this, Register::class.java)
             startActivity(intent)
+        }
+
+        // 3. Exit the Application
+        binding.btnExit.setOnClickListener {
+            finishAffinity() // Closes all activities
+            System.exit(0)   // Ensures the process is killed
         }
     }
 }

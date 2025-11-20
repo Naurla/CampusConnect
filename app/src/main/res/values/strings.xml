@@ -23,4 +23,9 @@
     <string name="program_e_g_bscs">Program (e.g., BSCS)</string>
     <string name="passwords">Password</string>
     <string name="create_account">Create Account</string>
+    <string name="campusconnect1">CampusConnect</string>
+    <string name="your_centralized_school_events_hub">Your centralized school events hub</string>
+    <string name="login1">Login</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="exit_app">Exit App</string>
 </resources>
