@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.campusconnect.databinding.ActivityLoginBinding
-import com.example.campusconnect.databinding.ActivityMainBinding
 
 class Login : AppCompatActivity() {
 
@@ -20,7 +19,7 @@ class Login : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Handle window insets
+        // Handle window insets (System bars)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(binding.main.id)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -39,20 +38,26 @@ class Login : AppCompatActivity() {
             if (username.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Please enter email/ID and password", Toast.LENGTH_SHORT).show()
             } else {
-                // NOLN BYOT
-                Toast.makeText(this, "Attempting Login...", Toast.LENGTH_SHORT).show()
+                // --- LOGIN SUCCESS LOGIC ---
+                Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
+
+                // Navigate to StudentDashboard
+                val intent = Intent(this, StudentDashboard::class.java)
+                startActivity(intent)
+
+                // Close the Login Activity so "Back" doesn't return here
+                finish()
             }
         }
 
         // 2. Forgot Password Logic
         binding.tvForgotPassword.setOnClickListener {
             Toast.makeText(this, "Forgot Password clicked", Toast.LENGTH_SHORT).show()
-            // You can create a ForgotPasswordActivity later and add Intent here
+            // Future: Add Intent to ForgotPasswordActivity here
         }
 
         // 3. Register Link Logic (Navigation)
         binding.tvRegisterLink.setOnClickListener {
-            // This code switches from Login Screen -> Register Screen
             val intent = Intent(this, Register::class.java)
             startActivity(intent)
         }
